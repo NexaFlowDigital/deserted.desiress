@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>About — Deserted Desiress</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --obsidian: #0a0a0a;
+    --charcoal: #111111;
+    --graphite: #1a1a1a;
+    --smoke: #2a2a2a;
+    --ash: #888888;
+    --silver: #c8c8c8;
+    --pearl: #f0ede8;
+    --electric: #2563eb;
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'Space Mono', monospace;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--obsidian); color: var(--pearl); font-family: var(--font-body); font-size: 13px; line-height: 1.6; overflow-x: hidden; cursor: none; }
+  .cursor { width: 10px; height: 10px; background: var(--electric); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
+  .cursor-ring { width: 36px; height: 36px; border: 1px solid rgba(37,99,235,0.5); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.35s ease; }
+  body::after { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); opacity: 0.35; pointer-events: none; z-index: 9000; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between; padding: 28px 48px; background: rgba(10,10,10,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--smoke); }
+  .nav-logo { font-family: var(--font-display); font-size: 22px; font-weight: 300; letter-spacing: 0.12em; color: var(--pearl); text-decoration: none; text-transform: uppercase; }
+  .nav-logo span { color: var(--electric); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ash); text-decoration: none; transition: color 0.3s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--pearl); }
+  .nav-right { display: flex; gap: 28px; }
+  .nav-icon { color: var(--ash); text-decoration: none; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.3s; }
+  .nav-icon:hover { color: var(--pearl); }
+
+  /* HERO */
+  .about-hero {
+    min-height: 100vh;
+    display: flex; align-items: flex-end;
+    padding: 0 48px 80px;
+    position: relative; overflow: hidden;
+  }
+  .about-hero-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, #050510 0%, #0d0d20 40%, #0a0a0a 100%);
+  }
+  .about-hero-graphic {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.06;
+  }
+  .about-hero-graphic svg { width: 70vw; height: 70vh; }
+  .about-hero-text-bg {
+    position: absolute; top: 50%; right: 48px;
+    transform: translateY(-50%);
+    font-family: var(--font-display);
+    font-size: clamp(100px, 18vw, 240px);
+    font-weight: 300;
+    font-style: italic;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(37,99,235,0.12);
+    letter-spacing: -0.06em;
+    line-height: 1;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 700px; }
+  .hero-content .eyebrow { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--electric); margin-bottom: 20px; display: block; opacity: 0; animation: fadeUp 1s 0.3s forwards; }
+  .hero-content h1 { font-family: var(--font-display); font-size: clamp(56px, 7vw, 100px); font-weight: 300; line-height: 0.95; letter-spacing: -0.02em; margin-bottom: 32px; opacity: 0; animation: fadeUp 1s 0.5s forwards; }
+  .hero-content h1 em { font-style: italic; color: var(--silver); }
+  .hero-content p { font-size: 13px; color: var(--ash); line-height: 2; max-width: 520px; opacity: 0; animation: fadeUp 1s 0.7s forwards; }
+
+  /* STORY SECTION */
+  .story-section { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--smoke); }
+  .story-visual { background: var(--graphite); min-height: 70vh; position: relative; overflow: hidden; border-right: 1px solid var(--smoke); }
+  .story-visual-bg { position: absolute; inset: 0; background: linear-gradient(145deg, #0a0a1a 0%, #111827 100%); }
+  .story-visual-content { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .story-visual-content svg { width: 60%; height: 60%; opacity: 0.1; }
+  .story-year { position: absolute; bottom: 48px; left: 48px; font-family: var(--font-display); font-size: 120px; font-weight: 300; font-style: italic; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.1); line-height: 1; }
+  .story-content { padding: 80px 64px; display: flex; flex-direction: column; justify-content: center; gap: 32px; }
+  .story-eyebrow { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--electric); }
+  .story-content h2 { font-family: var(--font-display); font-size: clamp(36px, 3vw, 52px); font-weight: 300; line-height: 1.1; }
+  .story-content h2 em { font-style: italic; }
+  .story-content p { font-size: 12px; color: var(--ash); line-height: 2.1; }
+  .story-divider { width: 40px; height: 1px; background: var(--electric); }
+
+  /* VALUES */
+  .values-section { padding: 120px 48px; border-top: 1px solid var(--smoke); }
+  .values-title { font-family: var(--font-display); font-size: clamp(40px, 4vw, 64px); font-weight: 300; margin-bottom: 64px; }
+  .values-title em { font-style: italic; }
+  .values-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .value-item { padding: 48px 40px; background: var(--charcoal); border: 1px solid var(--smoke); }
+  .value-num { font-size: 48px; font-family: var(--font-display); font-weight: 300; color: rgba(37,99,235,0.2); display: block; margin-bottom: 16px; }
+  .value-name { font-family: var(--font-display); font-size: 28px; font-weight: 300; margin-bottom: 16px; }
+  .value-name em { font-style: italic; }
+  .value-desc { font-size: 11px; color: var(--ash); line-height: 2; }
+
+  /* PROCESS */
+  .process-section { border-top: 1px solid var(--smoke); padding: 120px 48px; background: var(--charcoal); }
+  .process-header { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; margin-bottom: 80px; align-items: end; }
+  .process-header h2 { font-family: var(--font-display); font-size: clamp(40px, 4vw, 64px); font-weight: 300; line-height: 1; }
+  .process-header h2 em { font-style: italic; }
+  .process-header p { font-size: 12px; color: var(--ash); line-height: 2; }
+  .process-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+  .process-step { padding: 40px 32px; background: var(--graphite); border: 1px solid var(--smoke); position: relative; }
+  .step-num { font-size: 10px; letter-spacing: 0.2em; color: var(--electric); display: block; margin-bottom: 20px; }
+  .step-name { font-family: var(--font-display); font-size: 24px; font-weight: 300; margin-bottom: 12px; }
+  .step-desc { font-size: 11px; color: var(--ash); line-height: 1.9; }
+  .step-connector { position: absolute; top: 44px; right: -1px; width: 24px; height: 1px; background: var(--electric); z-index: 1; }
+
+  /* CTA */
+  .about-cta { padding: 120px 48px; text-align: center; border-top: 1px solid var(--smoke); }
+  .about-cta h2 { font-family: var(--font-display); font-size: clamp(48px, 5vw, 80px); font-weight: 300; margin-bottom: 24px; }
+  .about-cta h2 em { font-style: italic; }
+  .about-cta p { font-size: 12px; color: var(--ash); margin-bottom: 48px; }
+  .btn-primary { background: var(--electric); color: #fff; padding: 16px 48px; font-family: var(--font-body); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; text-decoration: none; border: none; cursor: none; transition: background 0.3s; display: inline-block; }
+  .btn-primary:hover { background: #1d4ed8; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--smoke); padding: 64px 48px 40px; }
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 64px; margin-bottom: 64px; }
+  .footer-col h4 { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--pearl); margin-bottom: 20px; }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul a { font-size: 11px; color: var(--ash); text-decoration: none; transition: color 0.3s; }
+  .footer-col ul a:hover { color: var(--pearl); }
+  .footer-brand p { font-size: 11px; color: var(--ash); line-height: 1.9; max-width: 260px; margin-top: 12px; }
+  .footer-brand .social-links { display: flex; gap: 16px; margin-top: 24px; }
+  .social-links a { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ash); text-decoration: none; transition: color 0.3s; }
+  .social-links a:hover { color: var(--electric); }
+  .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 32px; border-top: 1px solid var(--smoke); }
+  .footer-bottom p { font-size: 10px; color: var(--smoke); letter-spacing: 0.1em; }
+  .footer-bottom a { color: var(--ash); text-decoration: none; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">Deserted <span>Desiress</span></a>
+  <ul class="nav-links">
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="shop.html#collections">Collections</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="nav-icon">Search</a>
+    <a href="#" class="nav-icon">Cart (0)</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="about-hero">
+  <div class="about-hero-bg"></div>
+  <div class="about-hero-graphic">
+    <svg viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="300" cy="200" r="180" stroke="white" stroke-width="0.5"/>
+      <circle cx="300" cy="200" r="120" stroke="white" stroke-width="0.5"/>
+      <circle cx="300" cy="200" r="60" stroke="white" stroke-width="0.5"/>
+      <line x1="120" y1="200" x2="480" y2="200" stroke="white" stroke-width="0.3"/>
+      <line x1="300" y1="20" x2="300" y2="380" stroke="white" stroke-width="0.3"/>
+      <line x1="172" y1="72" x2="428" y2="328" stroke="white" stroke-width="0.3"/>
+      <line x1="428" y1="72" x2="172" y2="328" stroke="white" stroke-width="0.3"/>
+    </svg>
+  </div>
+  <div class="about-hero-text-bg">DD</div>
+  <div class="hero-content">
+    <span class="eyebrow">Our Story</span>
+    <h1>Born from<br/><em>the Desert,</em><br/>made for<br/>the world.</h1>
+    <p>Deserted Desiress is more than a clothing brand. It's a statement — that luxury and street culture can coexist without compromise. That desire doesn't have to be tamed.</p>
+  </div>
+</section>
+
+<!-- STORY -->
+<div class="story-section">
+  <div class="story-visual">
+    <div class="story-visual-bg"></div>
+    <div class="story-visual-content">
+      <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="100,10 190,190 10,190" stroke="white" stroke-width="1" fill="none"/>
+        <polygon points="100,40 165,175 35,175" stroke="white" stroke-width="0.5" fill="none"/>
+        <polygon points="100,70 140,160 60,160" stroke="white" stroke-width="0.5" fill="none"/>
+        <circle cx="100" cy="130" r="30" stroke="white" stroke-width="0.5" fill="none"/>
+      </svg>
+    </div>
+    <div class="story-year">2024</div>
+  </div>
+  <div class="story-content">
+    <span class="story-eyebrow">The Beginning</span>
+    <h2>A vision <em>forged</em><br/>in the heat</h2>
+    <div class="story-divider"></div>
+    <p>Deserted Desiress was founded with one belief: that every garment should feel like it was made just for you. Inspired by the raw, uncompromising nature of desert landscapes and the burning desire to create something different — this brand was born.</p>
+    <p>We design every piece in-house, working with premium manufacturers to ensure our vision is executed without compromise. The result is clothing that lives between worlds — sophisticated enough for luxury, rugged enough for the street.</p>
+    <p>Based in Texas, with a mindset that belongs everywhere.</p>
+  </div>
+</div>
+
+<!-- VALUES -->
+<section class="values-section">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:64px">
+    <div>
+      <span style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--electric);display:block;margin-bottom:12px">What We Stand For</span>
+      <h2 class="values-title">Our <em>Core</em> Values</h2>
+    </div>
+  </div>
+  <div class="values-grid">
+    <div class="value-item">
+      <span class="value-num">01</span>
+      <div class="value-name"><em>Uncompromising</em> Quality</div>
+      <p class="value-desc">Every thread, every stitch is intentional. We partner with manufacturers who share our obsession for precision. If it doesn't meet our standard, it doesn't ship.</p>
+    </div>
+    <div class="value-item">
+      <span class="value-num">02</span>
+      <div class="value-name">Bold <em>Authenticity</em></div>
+      <p class="value-desc">We don't follow trends — we create them. Deserted Desiress exists outside the cycle of fast fashion. Every collection is a deliberate creative statement.</p>
+    </div>
+    <div class="value-item">
+      <span class="value-num">03</span>
+      <div class="value-name"><em>Community</em> First</div>
+      <p class="value-desc">Our customers aren't just buyers — they're part of something. We listen, we engage, we build. The brand is a living conversation between creator and community.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process-section">
+  <div class="process-header">
+    <div>
+      <span style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--electric);display:block;margin-bottom:12px">How We Work</span>
+      <h2>From <em>concept</em><br/>to closet.</h2>
+    </div>
+    <p>Our production process is built on trust, precision, and an unrelenting commitment to quality. We handle every step with intention — from the first sketch to the final stitch.</p>
+  </div>
+  <div class="process-steps">
+    <div class="process-step">
+      <span class="step-num">Step 01</span>
+      <div class="step-name">Design</div>
+      <p class="step-desc">Every piece begins as a hand sketch. Our creative director develops each concept with meticulous attention to silhouette, proportion, and detail.</p>
+      <div class="step-connector"></div>
+    </div>
+    <div class="process-step">
+      <span class="step-num">Step 02</span>
+      <div class="step-name">Sampling</div>
+      <p class="step-desc">Samples are produced by our manufacturing partner and reviewed multiple times. We reject and revise until the sample is exactly right.</p>
+      <div class="step-connector"></div>
+    </div>
+    <div class="process-step">
+      <span class="step-num">Step 03</span>
+      <div class="step-name">Production</div>
+      <p class="step-desc">Once approved, pieces are manufactured in limited runs. We control quantity to maintain exclusivity and reduce waste.</p>
+      <div class="step-connector"></div>
+    </div>
+    <div class="process-step">
+      <span class="step-num">Step 04</span>
+      <div class="step-name">Drop</div>
+      <p class="step-desc">Collections drop via our Shopify store and Instagram. Early access is given to our newsletter subscribers first — always.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="about-cta">
+  <h2>Ready to wear<br/><em>the vision?</em></h2>
+  <p>Explore our latest collection and find your piece of the desert.</p>
+  <a href="shop.html" class="btn-primary">Shop the Collection</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="index.html" class="nav-logo">Deserted <span style="color:var(--electric)">Desiress</span></a>
+      <p>Luxury streetwear crafted for those who move between worlds. Based in Texas, made for everywhere.</p>
+      <div class="social-links">
+        <a href="https://instagram.com/deserted.desiress" target="_blank">Instagram</a>
+        <a href="#">TikTok</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="shop.html">All Products</a></li>
+        <li><a href="shop.html">New Arrivals</a></li>
+        <li><a href="shop.html">Jeans & Jorts</a></li>
+        <li><a href="shop.html">Hoodies</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Info</h4>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="#">Size Guide</a></li>
+        <li><a href="#">Shipping & Returns</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="contact.html">Get in Touch</a></li>
+        <li><a href="tel:8172642615">817-264-2615</a></li>
+        <li><a href="https://instagram.com/deserted.desiress">@deserted.desiress</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Deserted Desiress. All rights reserved.</p>
+    <p><a href="#">Privacy Policy</a> · <a href="#">Terms</a></p>
+  </div>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.transform=`translate(${mx-5}px,${my-5}px)`; });
+  function animRing(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.transform=`translate(${rx-18}px,${ry-18}px)`; requestAnimationFrame(animRing); }
+  animRing();
+</script>
+</body>
+</html>
