@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Shop — Deserted Desiress</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --obsidian: #0a0a0a;
+    --charcoal: #111111;
+    --graphite: #1a1a1a;
+    --smoke: #2a2a2a;
+    --ash: #888888;
+    --silver: #c8c8c8;
+    --pearl: #f0ede8;
+    --electric: #2563eb;
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'Space Mono', monospace;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--obsidian); color: var(--pearl); font-family: var(--font-body); font-size: 13px; line-height: 1.6; overflow-x: hidden; cursor: none; }
+  .cursor { width: 10px; height: 10px; background: var(--electric); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
+  .cursor-ring { width: 36px; height: 36px; border: 1px solid rgba(37,99,235,0.5); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.35s ease; }
+  body::after { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); opacity: 0.35; pointer-events: none; z-index: 9000; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between; padding: 28px 48px; background: rgba(10,10,10,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--smoke); }
+  .nav-logo { font-family: var(--font-display); font-size: 22px; font-weight: 300; letter-spacing: 0.12em; color: var(--pearl); text-decoration: none; text-transform: uppercase; }
+  .nav-logo span { color: var(--electric); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ash); text-decoration: none; transition: color 0.3s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--pearl); }
+  .nav-right { display: flex; gap: 28px; }
+  .nav-icon { color: var(--ash); text-decoration: none; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.3s; }
+  .nav-icon:hover { color: var(--pearl); }
+
+  /* PAGE HEADER */
+  .page-header {
+    padding: 140px 48px 60px;
+    border-bottom: 1px solid var(--smoke);
+    display: flex; align-items: flex-end; justify-content: space-between;
+  }
+  .page-eyebrow { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--electric); display: block; margin-bottom: 12px; }
+  .page-title { font-family: var(--font-display); font-size: clamp(48px, 5vw, 80px); font-weight: 300; line-height: 1; }
+  .page-title em { font-style: italic; }
+  .result-count { font-size: 11px; color: var(--ash); }
+
+  /* SHOP LAYOUT */
+  .shop-layout { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar { border-right: 1px solid var(--smoke); padding: 48px 32px; position: sticky; top: 85px; height: calc(100vh - 85px); overflow-y: auto; }
+  .sidebar::-webkit-scrollbar { width: 2px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--smoke); }
+
+  .filter-group { margin-bottom: 40px; }
+  .filter-title { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--silver); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; cursor: none; }
+  .filter-title::after { content: '−'; color: var(--ash); font-size: 16px; }
+  .filter-opts { display: flex; flex-direction: column; gap: 10px; }
+  .filter-opt { display: flex; align-items: center; gap: 10px; cursor: none; }
+  .filter-opt input[type="checkbox"] { appearance: none; width: 14px; height: 14px; border: 1px solid var(--smoke); background: transparent; transition: background 0.2s, border-color 0.2s; flex-shrink: 0; cursor: none; }
+  .filter-opt input[type="checkbox"]:checked { background: var(--electric); border-color: var(--electric); }
+  .filter-opt label { font-size: 11px; color: var(--ash); cursor: none; transition: color 0.2s; }
+  .filter-opt:hover label { color: var(--pearl); }
+
+  .price-range { margin-top: 8px; }
+  .price-inputs { display: flex; gap: 8px; align-items: center; }
+  .price-input { width: 80px; background: var(--graphite); border: 1px solid var(--smoke); color: var(--pearl); padding: 8px 12px; font-family: var(--font-body); font-size: 11px; outline: none; transition: border-color 0.3s; }
+  .price-input:focus { border-color: var(--electric); }
+  .price-sep { color: var(--ash); font-size: 11px; }
+
+  .sort-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--smoke); }
+  .sort-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ash); }
+  .sort-select { background: var(--graphite); border: 1px solid var(--smoke); color: var(--pearl); padding: 6px 12px; font-family: var(--font-body); font-size: 10px; outline: none; letter-spacing: 0.05em; cursor: none; }
+
+  /* CATEGORY TABS */
+  .cat-tabs { display: flex; gap: 2px; margin-bottom: 2px; flex-wrap: wrap; }
+  .cat-tab { padding: 8px 18px; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ash); background: var(--charcoal); border: 1px solid var(--smoke); cursor: none; transition: all 0.3s; }
+  .cat-tab:hover, .cat-tab.active { background: var(--electric); color: #fff; border-color: var(--electric); }
+
+  /* PRODUCTS */
+  .products-main { padding: 32px 48px 80px; }
+  .products-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+  .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+
+  .product-card { position: relative; overflow: hidden; background: var(--graphite); cursor: none; }
+  .product-img { aspect-ratio: 3/4; position: relative; overflow: hidden; }
+  .product-img-bg { position: absolute; inset: 0; transition: transform 0.6s ease; }
+  .product-card:hover .product-img-bg { transform: scale(1.04); }
+  .pc1 { background: linear-gradient(145deg, #111 0%, #1a1a2e 60%, #0f172a 100%); }
+  .pc2 { background: linear-gradient(145deg, #1a1a1a 0%, #111827 100%); }
+  .pc3 { background: linear-gradient(145deg, #0f0f0f 0%, #1c1c2e 100%); }
+  .pc4 { background: linear-gradient(145deg, #111 0%, #16213e 100%); }
+  .pc5 { background: linear-gradient(145deg, #0a0a0f 0%, #1a1a3e 100%); }
+  .pc6 { background: linear-gradient(145deg, #141414 0%, #1e1b2e 100%); }
+
+  .product-img-icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .product-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%); }
+  .product-badge { position: absolute; top: 16px; left: 16px; background: var(--electric); color: #fff; font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; padding: 5px 10px; }
+  .product-wishlist { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border: 1px solid rgba(255,255,255,0.15); background: rgba(10,10,10,0.5); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; cursor: none; }
+  .product-card:hover .product-wishlist { opacity: 1; }
+
+  .product-info { padding: 20px; background: var(--charcoal); border-top: 1px solid var(--smoke); }
+  .product-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .product-tag { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--electric); }
+  .product-rating { font-size: 9px; color: var(--ash); }
+  .product-name { font-family: var(--font-display); font-size: 20px; font-weight: 300; margin-bottom: 4px; }
+  .product-desc { font-size: 10px; color: var(--ash); margin-bottom: 12px; }
+  .product-footer { display: flex; justify-content: space-between; align-items: center; }
+  .product-price { font-size: 13px; }
+  .product-add { background: transparent; border: 1px solid var(--smoke); color: var(--ash); font-family: var(--font-body); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; padding: 7px 14px; cursor: none; transition: all 0.3s; }
+  .product-add:hover { border-color: var(--electric); color: var(--electric); }
+
+  .product-card::before { content: ''; position: absolute; inset: 0; border: 1px solid transparent; transition: border-color 0.3s; z-index: 10; pointer-events: none; }
+  .product-card:hover::before { border-color: rgba(37,99,235,0.3); }
+
+  /* Load more */
+  .load-more-wrap { text-align: center; padding: 64px 0 0; }
+  .load-more { background: transparent; border: 1px solid var(--smoke); color: var(--ash); font-family: var(--font-body); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; padding: 16px 48px; cursor: none; transition: all 0.3s; }
+  .load-more:hover { border-color: var(--electric); color: var(--electric); }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">Deserted <span>Desiress</span></a>
+  <ul class="nav-links">
+    <li><a href="shop.html" class="active">Shop</a></li>
+    <li><a href="shop.html#collections">Collections</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="nav-icon">Search</a>
+    <a href="#" class="nav-icon">Cart (0)</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div>
+    <span class="page-eyebrow">All Products</span>
+    <h1 class="page-title">The <em>Collection</em></h1>
+  </div>
+  <div class="result-count">Showing 68 products</div>
+</div>
+
+<div class="shop-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="filter-group">
+      <div class="filter-title">Category</div>
+      <div class="filter-opts">
+        <label class="filter-opt"><input type="checkbox" checked/><span>All</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Jeans</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Jorts</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Hoodies</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Long Sleeves</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Short Sleeves</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Accessories</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Socks</span></label>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-title">Size</div>
+      <div class="filter-opts">
+        <label class="filter-opt"><input type="checkbox"/><span>XS</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>S</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>M</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>L</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>XL</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>XXL</span></label>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-title">Price Range</div>
+      <div class="price-range">
+        <div class="price-inputs">
+          <input type="text" class="price-input" placeholder="$0"/>
+          <span class="price-sep">—</span>
+          <input type="text" class="price-input" placeholder="$300"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-title">Availability</div>
+      <div class="filter-opts">
+        <label class="filter-opt"><input type="checkbox" checked/><span>In Stock</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Pre-Order</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Sold Out</span></label>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="products-main">
+    <div class="products-toolbar">
+      <div class="cat-tabs">
+        <button class="cat-tab active">All</button>
+        <button class="cat-tab">New In</button>
+        <button class="cat-tab">Jeans</button>
+        <button class="cat-tab">Hoodies</button>
+        <button class="cat-tab">Tops</button>
+        <button class="cat-tab">Accessories</button>
+      </div>
+      <div class="sort-bar">
+        <span class="sort-label">Sort:</span>
+        <select class="sort-select">
+          <option>Featured</option>
+          <option>Price: Low to High</option>
+          <option>Price: High to Low</option>
+          <option>Newest</option>
+          <option>Bestselling</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="product-grid">
+
+      <!-- Product 1 -->
+      <div class="product-card">
+        <div class="product-img">
+          <div class="product-img-bg pc1">
+            <div class="product-img-icon">
+              <svg width="90" height="130" viewBox="0 0 90 130" fill="none" opacity="0.15">
+                <rect x="15" y="10" width="60" height="110" rx="2" stroke="white" stroke-width="1"/>
+                <path d="M15 30 L3 45 L3 85 L15 70" stroke="white" stroke-width="1" fill="none"/>
+                <path d="M75 30 L87 45 L87 85 L75 70" stroke="white" stroke-width="1" fill="none"/>
+              </svg>
+            </div>
+          </div>
+          <div class="product-overlay"></div>
+          <div class="product-badge">New</div>
+          <div class="product-wishlist">♡</div>
+        </div>
+        <div class="product-info">
+          <div class="product-meta">
+            <span class="product-tag">Hoodie</span>
+            <span class="product-rating">★ 4.9</span>
+          </div>
+          <div class="product-name">Void Pullover</div>
+          <div class="product-desc">Heavyweight French terry, oversized fit</div>
+          <div class="product-footer">
+            <span class="product-price">$148</span>
+            <button class="product-add" onclick="window.location='product.html'">View →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 2 -->
+      <div class="product-card">
+        <div class="product-img">
+          <div class="product-img-bg pc2">
+            <div class="product-img-icon">
+              <svg width="100" height="90" viewBox="0 0 100 90" fill="none" opacity="0.15">
+                <rect x="10" y="10" width="80" height="70" rx="1" stroke="white" stroke-width="1"/>
+                <line x1="10" y1="35" x2="90" y2="35" stroke="white" stroke-width="0.5"/>
+                <line x1="10" y1="40" x2="90" y2="40" stroke="white" stroke-width="0.5"/>
+                <rect x="30" y="55" width="40" height="20" rx="1" stroke="white" stroke-width="0.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="product-overlay"></div>
+          <div class="product-badge">Bestseller</div>
+          <div class="product-wishlist">♡</div>
+        </div>
+        <div class="product-info">
+          <div class="product-meta">
+            <span class="product-tag">Jeans</span>
+            <span class="product-rating">★ 4.8</span>
+          </div>
+          <div class="product-name">Arid Slim</div>
+          <div class="product-desc">12oz denim, slim tapered cut</div>
+          <div class="product-footer">
+            <span class="product-price">$168</span>
+            <button class="product-add" onclick="window.location='product.html'">View →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 3 -->
+      <div class="product-card">
+        <div class="product-img">
+          <div class="product-img-bg pc3">
+            <div class="product-img-icon">
+              <svg width="100" height="80" viewBox="0 0 100 80" fill="none" opacity="0.15">
+                <rect x="15" y="15" width="70" height="50" rx="1" stroke="white" stroke-width="1"/>
+                <path d="M15 25 L5 35 L5 55 L15 45" stroke="white" stroke-width="1" fill="none"/>
+                <path d="M85 25 L95 35 L95 55 L85 45" stroke="white" stroke-width="1" fill="none"/>
+              </svg>
+            </div>
+          </div>
+          <div class="product-overlay"></div>
+          <div class="product-wishlist">♡</div>
+        </div>
+        <div class="product-info">
+          <div class="product-meta">
+            <span class="product-tag">Long Sleeve</span>
+            <span class="product-rating">★ 4.7</span>
+          </div>
+          <div class="product-name">Drift L/S Tee</div>
+          <div class="product-desc">230gsm cotton, relaxed fit</div>
+          <div class="product-footer">
+            <span class="product-price">$92</span>
+            <button class="product-add" onclick="window.location='product.html'">View →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 4 -->
+      <div class="product-card">
+        <div class="product-img">
+          <div class="product-img-bg pc4">
+            <div class="product-img-icon">
+              <svg width="90" height="100" viewBox="0 0 90 100" fill="none" opacity="0.15">
+                <rect x="15" y="20" width="60" height="65" rx="1" stroke="white" stroke-width="1"/>
+                <line x1="15" y1="50" x2="75" y2="50" stroke="white" stroke-width="0.5"/>
+                <rect x="30" y="20" width="30" height="10" rx="0" stroke="white" stroke-width="0.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="product-overlay"></div>
+          <div class="product-badge">Limited</div>
+          <div class="product-wishlist">♡</div>
+        </div>
+        <div class="product-info">
+          <div class="product-meta">
+            <span class="product-tag">Jorts</span>
+            <span class="product-rating">★ 4.9</span>
+          </div>
+          <div class="product-name">Canyon Jorts</div>
+          <div class="product-desc">Distressed denim, raw hem</div>
+          <div class="product-footer">
+            <span class="product-price">$118</span>
+            <button class="product-add" onclick="window.location='product.html'">View →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 5 -->
+      <div class="product-card">
+        <div class="product-img">
+          <div class="product-img-bg pc5">
+            <div class="product-img-icon">
+              <svg width="100" height="70" viewBox="0 0 100 70" fill="none" opacity="0.15">
+                <rect x="10" y="15" width="80" height="40" rx="20" stroke="white" stroke-width="1"/>
+                <line x1="10" y1="35" x2="90" y2="35" stroke="white" stroke-width="0.3"/>
+              </svg>
+            </div>
+          </div>
+          <div class="product-overlay"></div>
+          <div class="product-wishlist">♡</div>
+        </div>
+        <div class="product-info">
+          <div class="product-meta">
+            <span class="product-tag">Short Sleeve</span>
+            <span class="product-rating">★ 4.6</span>
+          </div>
+          <div class="product-name">Mirage Tee</div>
+          <div class="product-desc">Pima cotton blend, boxy fit</div>
+          <div class="product-footer">
+            <span class="product-price">$68</span>
+            <button class="product-add" onclick="window.location='product.html'">View →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 6 -->
+      <div class="product-card">
+        <div class="product-img">
+          <div class="product-img-bg pc6">
+            <div class="product-img-icon">
+              <svg width="70" height="70" viewBox="0 0 70 70" fill="none" opacity="0.15">
+                <circle cx="35" cy="25" r="18" stroke="white" stroke-width="1"/>
+                <rect x="10" y="40" width="50" height="22" rx="11" stroke="white" stroke-width="1"/>
+                <line x1="10" y1="51" x2="60" y2="51" stroke="white" stroke-width="0.3"/>
+              </svg>
+            </div>
+          </div>
+          <div class="product-overlay"></div>
+          <div class="product-wishlist">♡</div>
+        </div>
+        <div class="product-info">
+          <div class="product-meta">
+            <span class="product-tag">Accessories</span>
+            <span class="product-rating">★ 4.8</span>
+          </div>
+          <div class="product-name">Dune Beanie</div>
+          <div class="product-desc">100% merino wool, ribbed knit</div>
+          <div class="product-footer">
+            <span class="product-price">$48</span>
+            <button class="product-add" onclick="window.location='product.html'">View →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 7 -->
+      <div class="product-card">
+        <div class="product-img">
+          <div class="product-img-bg pc2">
+            <div class="product-img-icon">
+              <svg width="80" height="40" viewBox="0 0 80 40" fill="none" opacity="0.15">
+                <ellipse cx="40" cy="20" rx="35" ry="15" stroke="white" stroke-width="1"/>
+                <line x1="5" y1="20" x2="75" y2="20" stroke="white" stroke-width="0.4"/>
+                <path d="M10 20 Q40 8 70 20" stroke="white" stroke-width="0.4" fill="none"/>
+              </svg>
+            </div>
+          </div>
+          <div class="product-overlay"></div>
+          <div class="product-badge">New</div>
+          <div class="product-wishlist">♡</div>
+        </div>
+        <div class="product-info">
+          <div class="product-meta">
+            <span class="product-tag">Socks</span>
+            <span class="product-rating">★ 4.7</span>
+          </div>
+          <div class="product-name">Desert Crew Socks</div>
+          <div class="product-desc">Combed cotton, mid-calf height</div>
+          <div class="product-footer">
+            <span class="product-price">$22</span>
+            <button class="product-add" onclick="window.location='product.html'">View →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 8 -->
+      <div class="product-card">
+        <div class="product-img">
+          <div class="product-img-bg pc1">
+            <div class="product-img-icon">
+              <svg width="90" height="130" viewBox="0 0 90 130" fill="none" opacity="0.15">
+                <rect x="10" y="10" width="70" height="115" rx="2" stroke="white" stroke-width="1"/>
+                <path d="M10 40 L0 55 L0 90 L10 75" stroke="white" stroke-width="1" fill="none"/>
+                <path d="M80 40 L90 55 L90 90 L80 75" stroke="white" stroke-width="1" fill="none"/>
+                <line x1="10" y1="70" x2="80" y2="70" stroke="white" stroke-width="0.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="product-overlay"></div>
+          <div class="product-wishlist">♡</div>
+        </div>
+        <div class="product-info">
+          <div class="product-meta">
+            <span class="product-tag">Hoodie</span>
+            <span class="product-rating">★ 5.0</span>
+          </div>
+          <div class="product-name">Eclipse Zip Hoodie</div>
+          <div class="product-desc">Full-zip, brushed fleece interior</div>
+          <div class="product-footer">
+            <span class="product-price">$172</span>
+            <button class="product-add" onclick="window.location='product.html'">View →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 9 -->
+      <div class="product-card">
+        <div class="product-img">
+          <div class="product-img-bg pc3">
+            <div class="product-img-icon">
+              <svg width="100" height="90" viewBox="0 0 100 90" fill="none" opacity="0.15">
+                <rect x="5" y="10" width="90" height="70" rx="1" stroke="white" stroke-width="1"/>
+                <line x1="5" y1="38" x2="95" y2="38" stroke="white" stroke-width="0.5"/>
+                <line x1="5" y1="43" x2="95" y2="43" stroke="white" stroke-width="0.5"/>
+                <circle cx="50" cy="20" r="5" stroke="white" stroke-width="0.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="product-overlay"></div>
+          <div class="product-badge">Sale</div>
+          <div class="product-wishlist">♡</div>
+        </div>
+        <div class="product-info">
+          <div class="product-meta">
+            <span class="product-tag">Jeans</span>
+            <span class="product-rating">★ 4.5</span>
+          </div>
+          <div class="product-name">Dusk Wide Leg</div>
+          <div class="product-desc">Relaxed wide leg, contrast stitching</div>
+          <div class="product-footer">
+            <span class="product-price"><span style="color:var(--ash);text-decoration:line-through;font-size:11px">$188</span> $138</span>
+            <button class="product-add" onclick="window.location='product.html'">View →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="load-more-wrap">
+      <button class="load-more">Load More Products</button>
+    </div>
+  </main>
+
+</div>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => {
+    mx=e.clientX; my=e.clientY;
+    cursor.style.transform=`translate(${mx-5}px,${my-5}px)`;
+  });
+  function animRing(){
+    rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+    ring.style.transform=`translate(${rx-18}px,${ry-18}px)`;
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  // Category tab toggle
+  document.querySelectorAll('.cat-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
